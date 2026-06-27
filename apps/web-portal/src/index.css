@@ -81,6 +81,17 @@ a:hover {
   opacity: 0.8;
 }
 
+.public-layout {
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+.public-layout button,
+.public-layout input,
+.public-layout textarea,
+.public-layout select {
+  font-family: inherit;
+}
+
 .petition-center-page {
   min-height: 100vh;
   background: #000000;
