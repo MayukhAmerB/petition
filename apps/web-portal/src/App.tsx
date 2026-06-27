@@ -185,7 +185,7 @@ function PublicLayout() {
                 ADL<span style={{ color: '#ef4444' }}>FRONT</span>
               </h3>
               <p style={{ lineHeight: 1.6, color: '#666666' }}>
-                An independent non-profit human rights organisation defending constitutional civil rights, civil liberties, and institutional accountability in the Republic of India.
+                An independent cyber intelligence and digital investigations agency dedicated to lawful attribution, digital forensics, and online threat analysis.
               </p>
             </div>
             
