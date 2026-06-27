@@ -648,21 +648,8 @@ function HomeView() {
             </div>
           </div>
 
-          {/* Academy & Institutional Chronology - Side by Side */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '28px' }}>
-            {/* ADL FRONT Academy Card */}
-            <div style={{ backgroundColor: '#080808', borderRadius: '12px', padding: '32px', border: '1px solid #141414', boxShadow: '0 10px 30px rgba(0,0,0,0.4)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '8px', backgroundColor: 'rgba(239, 68, 68, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Award size={20} style={{ color: '#ef4444' }} />
-                </div>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: 800, textTransform: 'uppercase', color: '#ffffff' }}>ADL FRONT Academy</h3>
-              </div>
-              <p style={{ color: '#a0aec0', lineHeight: 1.7, fontSize: '0.9rem' }}>
-                The ADL FRONT Academy provides professional training in cyber intelligence, OSINT, digital investigations, and forensic documentation. Its objective is to equip trainees with practical investigative skills while emphasizing legal compliance, ethical standards, and evidence-based intelligence practices.
-              </p>
-            </div>
-
+          {/* Institutional Chronology */}
+          <div style={{ maxWidth: '780px', margin: '0 auto' }}>
             {/* Institutional Chronology Card */}
             <div style={{ backgroundColor: '#080808', borderRadius: '12px', padding: '32px', border: '1px solid #141414', boxShadow: '0 10px 30px rgba(0,0,0,0.4)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
