@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48" fill="none">
+  <!-- Rounded dark background circle for contrast in browser tab -->
+  <rect width="24" height="24" rx="5" fill="#080808" />
+  
+  <!-- Central pillar -->
+  <path d="M12 4.5v14.5" stroke="#ef4444" stroke-width="1.2" stroke-linecap="round" />
+  <!-- Pillar stand -->
+  <path d="M9.5 19h5" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round" />
+  <!-- Pillar top details -->
+  <path d="M11 4.5h2" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round" />
+  
+  <!-- Balance beam -->
+  <path d="M6 7.5h12" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" />
+  
+  <!-- Left scale string and pan -->
+  <path d="M6 7.5L4.5 12" stroke="#ffffff" stroke-width="0.8" stroke-linecap="round" />
+  <path d="M6 7.5L7.5 12" stroke="#ffffff" stroke-width="0.8" stroke-linecap="round" />
+  <path d="M3.5 12h5" stroke="#ef4444" stroke-width="1.2" stroke-linecap="round" />
+  
+  <!-- Right scale string and pan -->
+  <path d="M18 7.5L16.5 12" stroke="#ffffff" stroke-width="0.8" stroke-linecap="round" />
+  <path d="M18 7.5L19.5 12" stroke="#ffffff" stroke-width="0.8" stroke-linecap="round" />
+  <path d="M15.5 12h5" stroke="#ef4444" stroke-width="1.2" stroke-linecap="round" />
+</svg>
