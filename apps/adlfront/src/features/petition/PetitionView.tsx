@@ -102,8 +102,48 @@ export default function PetitionView() {
   const [captchaAnswer, setCaptchaAnswer] = useState('');
 
   // Altcha states
+  const [altchaVerified, setAltchaVerified] = useState(false);
   const [altchaPayload, setAltchaPayload] = useState('');
   const altchaRef = React.useRef<any>(null);
+
+  const readAltchaVerification = React.useCallback((ev?: any) => {
+    const elem = altchaRef.current;
+    if (!elem) {
+      return { verified: false, payload: '' };
+    }
+
+    const detail = ev?.detail || {};
+    const hiddenInput =
+      elem.querySelector?.('input[name="altcha"]') ||
+      elem.shadowRoot?.querySelector?.('input[name="altcha"]');
+    const widgetPayload =
+      detail.payload ||
+      detail.response ||
+      detail.value ||
+      elem.payload ||
+      elem.value ||
+      hiddenInput?.value ||
+      '';
+    const widgetState = detail.state || elem.state || elem.getAttribute?.('data-state');
+    const visibleVerified =
+      elem.textContent?.toLowerCase().includes('verified') ||
+      elem.shadowRoot?.textContent?.toLowerCase().includes('verified') ||
+      false;
+    const verified =
+      widgetState === 'verified' ||
+      ev?.type === 'verified' ||
+      Boolean(widgetPayload) ||
+      Boolean(visibleVerified);
+
+    setAltchaVerified(verified);
+    if (widgetPayload) {
+      setAltchaPayload(widgetPayload);
+    } else if (!verified) {
+      setAltchaPayload('');
+    }
+
+    return { verified, payload: widgetPayload };
+  }, []);
 
   const loadCaptcha = async () => {
     try {
@@ -149,42 +189,20 @@ export default function PetitionView() {
       return;
     }
 
-    const readAltchaPayload = (ev?: any) => {
-      const detail = ev?.detail || {};
-      const widgetPayload =
-        detail.payload ||
-        detail.response ||
-        detail.value ||
-        elem.payload ||
-        elem.value ||
-        elem.querySelector?.('input[name="altcha"]')?.value ||
-        '';
-      const widgetState = detail.state || elem.state || elem.getAttribute?.('data-state');
-
-      if (widgetPayload && (widgetState === 'verified' || ev?.type === 'verified' || ev?.type === 'change' || !widgetState)) {
-        setAltchaPayload(widgetPayload);
-        return;
-      }
-
-      if (widgetState && widgetState !== 'verified') {
-        setAltchaPayload('');
-      }
-    };
-
-    const handleAltchaEvent = (ev: Event) => readAltchaPayload(ev);
+    const handleAltchaEvent = (ev: Event) => readAltchaVerification(ev);
     elem.addEventListener('statechange', handleAltchaEvent);
     elem.addEventListener('verified', handleAltchaEvent);
     elem.addEventListener('change', handleAltchaEvent);
 
-    const timer = window.setTimeout(() => readAltchaPayload(), 300);
+    const timer = window.setInterval(() => readAltchaVerification(), 500);
 
     return () => {
-      window.clearTimeout(timer);
+      window.clearInterval(timer);
       elem.removeEventListener('statechange', handleAltchaEvent);
       elem.removeEventListener('verified', handleAltchaEvent);
       elem.removeEventListener('change', handleAltchaEvent);
     };
-  }, [step, captcha?.id]);
+  }, [step, captcha?.id, readAltchaVerification]);
 
   // Submit Signature directly
   const handleSubmitSignature = async (e: React.FormEvent) => {
@@ -201,8 +219,13 @@ export default function PetitionView() {
       setActionError('You must agree to the Terms and Conditions.');
       return;
     }
-    if (!altchaPayload) {
+    const altcha = readAltchaVerification();
+    if (!altcha.verified) {
       setActionError('Please complete the cryptographic verify check.');
+      return;
+    }
+    if (!altcha.payload && !altchaPayload) {
+      setActionError('Verification is complete, but the security payload was not captured. Please refresh the verification check and try again.');
       return;
     }
     
@@ -226,7 +249,7 @@ export default function PetitionView() {
         agreed_terms: agreedTerms,
         captcha_id: captcha?.id || '',
         captcha_answer: captchaAnswer,
-        altcha_payload: altchaPayload,
+        altcha_payload: altcha.payload || altchaPayload,
       });
 
       setStep('success');
@@ -238,6 +261,8 @@ export default function PetitionView() {
       if (altchaRef.current) {
         altchaRef.current.reload();
       }
+      setAltchaVerified(false);
+      setAltchaPayload('');
     } finally {
       setSubmitting(false);
     }
@@ -682,7 +707,7 @@ export default function PetitionView() {
               type="submit" 
               className="btn btn-primary" 
               style={{ width: '100%', padding: '12px' }} 
-              disabled={submitting || !agreedTerms || !captchaAnswer.trim() || !altchaPayload}
+              disabled={submitting || !agreedTerms || !captchaAnswer.trim() || !altchaVerified}
             >
               {submitting ? <Loader2 size={18} className="animate-spin" /> : 'Submit Signature'}
             </button>
