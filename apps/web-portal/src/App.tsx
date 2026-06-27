@@ -133,9 +133,9 @@ interface Campaign {
 
 function PublicLayout() {
   return (
-    <div style={{ backgroundColor: '#000000', minHeight: '100vh', color: '#ffffff', display: 'flex', flexDirection: 'column' }}>
+    <div className="public-layout" style={{ backgroundColor: '#000000', minHeight: '100vh', color: '#ffffff', display: 'flex', flexDirection: 'column' }}>
       {/* Navigation Header */}
-      <header style={{ 
+      <header className="site-header" style={{ 
         borderBottom: '2px solid #ef4444', 
         backgroundColor: 'rgba(0, 0, 0, 0.85)', 
         backdropFilter: 'blur(12px)',
@@ -145,9 +145,9 @@ function PublicLayout() {
         zIndex: 50, 
         padding: '16px 24px' 
       }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="site-header-inner" style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           {/* ADLFRONT Logo - ADL in Red, FRONT in White - Acts as Home button */}
-          <a href="/#top" style={{ display: 'flex', alignItems: 'center', gap: '4px', textDecoration: 'none', fontWeight: 800, fontSize: '1.4rem' }}>
+          <a className="site-brand" href="/#top" style={{ display: 'flex', alignItems: 'center', gap: '4px', textDecoration: 'none', fontWeight: 800, fontSize: '1.4rem' }}>
             <span style={{ color: '#ef4444' }}>ADL</span>
             <span style={{ color: '#ffffff' }}>FRONT</span>
           </a>
@@ -300,7 +300,7 @@ function HomeView() {
         }} />
 
         {/* Content Container - 2 Column Layout */}
-        <div style={{ 
+          <div className="hero-content-grid" style={{ 
           maxWidth: '1200px', 
           width: '100%',
           margin: '0 auto', 
@@ -313,8 +313,8 @@ function HomeView() {
           textAlign: 'left'
         }}>
           {/* Column 1: Core Copy */}
-          <div>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 12px', backgroundColor: 'rgba(239, 68, 68, 0.08)', borderRadius: '20px', border: '1px solid rgba(239, 68, 68, 0.2)', marginBottom: '24px' }}>
+          <div className="hero-copy">
+            <div className="hero-kicker" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 12px', backgroundColor: 'rgba(239, 68, 68, 0.08)', borderRadius: '20px', border: '1px solid rgba(239, 68, 68, 0.2)', marginBottom: '24px' }}>
               <span style={{ width: '6px', height: '6px', backgroundColor: '#ef4444', borderRadius: '50%', display: 'inline-block' }} />
               <span style={{ 
                 color: '#ef4444', 
@@ -352,8 +352,8 @@ function HomeView() {
           </div>
 
           {/* Column 2: Live Featured Platform Preview Card */}
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <div className="glass-panel-premium" style={{ 
+          <div className="hero-activity-wrap" style={{ display: 'flex', justifyContent: 'center' }}>
+            <div className="glass-panel-premium hero-activity-card" style={{ 
               width: '100%', 
               maxWidth: '440px', 
               padding: '32px', 
