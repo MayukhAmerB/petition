@@ -105,23 +105,47 @@ export default function PetitionView() {
   }, [id]);
 
   useEffect(() => {
-    const handleStateChange = (ev: any) => {
-      if (ev.detail && ev.detail.state === 'verified') {
-        setAltchaPayload(ev.detail.payload);
-      } else {
+    const elem = altchaRef.current;
+    if (!elem) {
+      return;
+    }
+
+    const readAltchaPayload = (ev?: any) => {
+      const detail = ev?.detail || {};
+      const widgetPayload =
+        detail.payload ||
+        detail.response ||
+        detail.value ||
+        elem.payload ||
+        elem.value ||
+        elem.querySelector?.('input[name="altcha"]')?.value ||
+        '';
+      const widgetState = detail.state || elem.state || elem.getAttribute?.('data-state');
+
+      if (widgetPayload && (widgetState === 'verified' || ev?.type === 'verified' || ev?.type === 'change' || !widgetState)) {
+        setAltchaPayload(widgetPayload);
+        return;
+      }
+
+      if (widgetState && widgetState !== 'verified') {
         setAltchaPayload('');
       }
     };
-    const elem = altchaRef.current;
-    if (elem) {
-      elem.addEventListener('statechange', handleStateChange);
-    }
+
+    const handleAltchaEvent = (ev: Event) => readAltchaPayload(ev);
+    elem.addEventListener('statechange', handleAltchaEvent);
+    elem.addEventListener('verified', handleAltchaEvent);
+    elem.addEventListener('change', handleAltchaEvent);
+
+    const timer = window.setTimeout(() => readAltchaPayload(), 300);
+
     return () => {
-      if (elem) {
-        elem.removeEventListener('statechange', handleStateChange);
-      }
+      window.clearTimeout(timer);
+      elem.removeEventListener('statechange', handleAltchaEvent);
+      elem.removeEventListener('verified', handleAltchaEvent);
+      elem.removeEventListener('change', handleAltchaEvent);
     };
-  }, [step, captcha]);
+  }, [step, captcha?.id]);
 
   // Submit Signature directly
   const handleSubmitSignature = async (e: React.FormEvent) => {
