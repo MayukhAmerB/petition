@@ -51,7 +51,6 @@ export default function DashboardView() {
   // Petition creation form states
   const [title, setTitle] = useState('');
   const [imageUrl, setImageUrl] = useState('');
-  const [eyeLabel, setEyeLabel] = useState('');
   const [description, setDescription] = useState('');
   const [terms, setTerms] = useState('');
   const [goal, setGoal] = useState('5000');
@@ -209,7 +208,7 @@ export default function DashboardView() {
         title,
         description,
         image_data: imageUrl.trim() || null,
-        eye_label: eyeLabel.trim() || null,
+        eye_label: null,
         terms,
         goal: Number(goal) || 5000,
       });
@@ -228,7 +227,6 @@ export default function DashboardView() {
       // Reset form
       setTitle('');
       setImageUrl('');
-      setEyeLabel('');
       setDescription('');
       setTerms('');
       setGoal('5000');
@@ -611,20 +609,6 @@ export default function DashboardView() {
                     <button type="button" onClick={() => setImageUrl('')} className="btn btn-secondary" style={{ padding: '2px 8px', fontSize: '0.75rem' }}>Clear</button>
                   </div>
                 )}
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Eye Mask Label (e.g. NAZIA ELAHI)</label>
-                <input 
-                  type="text" 
-                  className="form-input" 
-                  value={eyeLabel} 
-                  onChange={e => setEyeLabel(e.target.value)} 
-                  placeholder="Uppercase label to display on eye sensor bar..." 
-                />
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '6px', display: 'block' }}>
-                  Optional. Text overlay shown on the black bar of the campaign card.
-                </span>
               </div>
 
               <div className="form-group">
