@@ -36,6 +36,45 @@ declare module 'react' {
   }
 }
 
+const INDIA_STATES_AND_UNION_TERRITORIES = [
+  'Andhra Pradesh',
+  'Arunachal Pradesh',
+  'Assam',
+  'Bihar',
+  'Chhattisgarh',
+  'Goa',
+  'Gujarat',
+  'Haryana',
+  'Himachal Pradesh',
+  'Jharkhand',
+  'Karnataka',
+  'Kerala',
+  'Madhya Pradesh',
+  'Maharashtra',
+  'Manipur',
+  'Meghalaya',
+  'Mizoram',
+  'Nagaland',
+  'Odisha',
+  'Punjab',
+  'Rajasthan',
+  'Sikkim',
+  'Tamil Nadu',
+  'Telangana',
+  'Tripura',
+  'Uttar Pradesh',
+  'Uttarakhand',
+  'West Bengal',
+  'Andaman and Nicobar Islands',
+  'Chandigarh',
+  'Dadra and Nagar Haveli and Daman and Diu',
+  'Delhi',
+  'Jammu and Kashmir',
+  'Ladakh',
+  'Lakshadweep',
+  'Puducherry',
+];
+
 export default function PetitionView() {
   const { id } = useParams<{ id: string }>();
   const [petition, setPetition] = useState<Petition | null>(null);
@@ -49,7 +88,7 @@ export default function PetitionView() {
   const [city, setCity] = useState('');
   const [pincode, setPincode] = useState('');
   const [stateName, setStateName] = useState('');
-  const [country, setCountry] = useState('');
+  const country = 'India';
   const [phone, setPhone] = useState('');
   
   // Verification flow states
@@ -154,6 +193,10 @@ export default function PetitionView() {
       setActionError('All fields are required.');
       return;
     }
+    if (phone.length !== 10) {
+      setActionError('Please enter a valid 10-digit Indian mobile number.');
+      return;
+    }
     if (!agreedTerms) {
       setActionError('You must agree to the Terms and Conditions.');
       return;
@@ -176,7 +219,7 @@ export default function PetitionView() {
       };
 
       await api.post('/petition/sign', {
-        phone,
+        phone: `+91${phone}`,
         petition_id: id,
         first_name: `${firstName} ${lastName}`,
         last_name: JSON.stringify(volunteerDetails),
@@ -221,8 +264,8 @@ export default function PetitionView() {
   }
 
   return (
-    <div style={{ maxWidth: '800px', margin: '40px auto', padding: '0 16px' }} className="animate-fade-in">
-      <div className="glass-panel" style={{ padding: '32px', marginBottom: '24px' }}>
+    <div style={{ maxWidth: '800px', margin: '40px auto', padding: '0 16px', display: 'flex', flexDirection: 'column' }} className="animate-fade-in">
+      <div className="glass-panel" style={{ padding: '32px', marginBottom: '24px', order: 2 }}>
         <h1 className="title-gradient" style={{ fontSize: '2.2rem', fontWeight: 700, marginBottom: '16px', lineHeight: 1.2 }}>
           {petition.title}
         </h1>
@@ -303,7 +346,7 @@ export default function PetitionView() {
         </p>
       </div>
 
-      <div className="glass-panel" style={{ padding: '32px' }}>
+      <div className="glass-panel" style={{ padding: '32px', marginBottom: '24px', order: 1 }}>
         {actionError && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 16px', backgroundColor: 'rgba(239, 68, 68, 0.1)', border: '1px solid var(--danger)', borderRadius: '8px', marginBottom: '20px', color: '#fca5a5', fontSize: '0.9rem' }}>
             <AlertCircle size={18} style={{ flexShrink: 0 }} />
@@ -317,7 +360,7 @@ export default function PetitionView() {
               <Smartphone size={20} style={{ color: 'var(--primary)' }} /> Join this Petition
             </h2>
             
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '16px' }}>
               <div className="form-group">
                 <label className="form-label">First Name</label>
                 <input 
@@ -342,7 +385,7 @@ export default function PetitionView() {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '16px' }}>
               <div className="form-group">
                 <label className="form-label">Age</label>
                 <input 
@@ -368,7 +411,7 @@ export default function PetitionView() {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px', marginBottom: '16px' }}>
               <div className="form-group">
                 <label className="form-label">Pincode</label>
                 <input 
@@ -382,14 +425,17 @@ export default function PetitionView() {
               </div>
               <div className="form-group">
                 <label className="form-label">State</label>
-                <input 
-                  type="text" 
-                  className="form-input" 
-                  value={stateName} 
-                  onChange={e => setStateName(e.target.value)} 
-                  placeholder="Maharashtra" 
-                  required 
-                />
+                <select
+                  className="form-input"
+                  value={stateName}
+                  onChange={e => setStateName(e.target.value)}
+                  required
+                >
+                  <option value="">Select State / Union Territory</option>
+                  {INDIA_STATES_AND_UNION_TERRITORIES.map(region => (
+                    <option key={region} value={region}>{region}</option>
+                  ))}
+                </select>
               </div>
             </div>
 
@@ -399,24 +445,32 @@ export default function PetitionView() {
                 type="text" 
                 className="form-input" 
                 value={country} 
-                onChange={e => setCountry(e.target.value)} 
-                placeholder="India" 
+                readOnly
+                aria-readonly="true"
                 required 
               />
             </div>
 
             <div className="form-group" style={{ marginBottom: '24px' }}>
-              <label className="form-label">Phone Number (with Country Code)</label>
-              <input 
-                type="tel" 
-                className="form-input" 
-                value={phone} 
-                onChange={e => setPhone(e.target.value)} 
-                placeholder="+919876543210" 
-                required 
-              />
+              <label className="form-label">Phone Number</label>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <div className="form-input" style={{ width: '82px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>
+                  +91
+                </div>
+                <input
+                  type="tel"
+                  className="form-input"
+                  value={phone}
+                  onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                  placeholder="9876543210"
+                  inputMode="numeric"
+                  pattern="[0-9]{10}"
+                  maxLength={10}
+                  required
+                />
+              </div>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px', display: 'block' }}>
-                Please enter a valid phone number.
+                Enter your 10-digit Indian mobile number.
               </span>
             </div>
 
@@ -649,7 +703,6 @@ export default function PetitionView() {
               setCity('');
               setPincode('');
               setStateName('');
-              setCountry('');
               setPhone('');
               setAgreedTerms(false);
               setStep('details');
