@@ -123,7 +123,7 @@ export default function LegalView() {
                 <li>• Right to lodge grievances with our Data Grievance Officer.</li>
               </ul>
               <p style={{ marginTop: '16px' }}>
-                For data erasure requests or compliance questions, contact our Grievance Officer at: <strong style={{ color: '#ffffff' }}>grievance@adlfront.org</strong>.
+                For data erasure requests or compliance questions, contact our Grievance Officer at: <strong style={{ color: '#ffffff' }}>contact@adlfront.com</strong>.
               </p>
             </div>
           )}

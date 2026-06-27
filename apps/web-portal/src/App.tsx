@@ -215,7 +215,7 @@ function PublicLayout() {
               <p style={{ lineHeight: 1.6, color: '#666666' }}>
                 For public grievances, institutional submissions, and legal compliance reports, contact:
                 <br />
-                <strong style={{ color: '#ffffff', display: 'block', marginTop: '6px' }}>grievance@adlfront.org</strong>
+                <strong style={{ color: '#ffffff', display: 'block', marginTop: '6px' }}>contact@adlfront.com</strong>
               </p>
             </div>
           </div>

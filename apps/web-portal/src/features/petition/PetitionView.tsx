@@ -482,7 +482,7 @@ export default function PetitionView() {
                 <p>5.4 <strong>Data Retention</strong>: Retained for the duration of the Petition and up to 2 years thereafter for legal compliance, then securely deleted or anonymised.</p>
                 <p>5.5 <strong>Data Storage and Security</strong>: Stored on secured servers within the Republic of India. Encrypted at rest (AES-256) and in transit (TLS 1.3). Restricted access.</p>
                 <p>5.6 <strong>Your Rights as a Data Principal</strong>: Right to Access, Right to Correction, Right to Erasure, Right to Withdraw Consent, Right to Grievance Redressal, and Right to Nominate.</p>
-                <p>5.7 <strong>Data Grievance Officer</strong>: Contact the Grievance Officer at info@adlfront.org. Grievances will be addressed within 30 days.</p>
+                <p>5.7 <strong>Data Grievance Officer</strong>: Contact the Grievance Officer at contact@adlfront.com. Grievances will be addressed within 30 days.</p>
                 <p>5.8 If you believe your data rights have been violated and your grievance has not been satisfactorily resolved, you may approach the Data Protection Board of India.</p>
                 <br />
                 
