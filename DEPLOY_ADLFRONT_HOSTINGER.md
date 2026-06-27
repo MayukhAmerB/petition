@@ -44,7 +44,7 @@ Copy or clone `enterprise_project_structure` into `/opt/adlfront/enterprise_proj
 Build the frontend:
 
 ```bash
-cd /opt/adlfront/enterprise_project_structure/apps/web-portal
+cd /opt/adlfront/enterprise_project_structure/apps/adlfront
 npm install
 npm run build
 ```
