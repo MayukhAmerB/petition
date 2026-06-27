@@ -369,7 +369,7 @@ function HomeView() {
                 <div>
                   <span style={{ fontSize: '0.75rem', color: '#555555', textTransform: 'uppercase', fontWeight: 700, display: 'block', marginBottom: '4px' }}>VERIFIED DIGITAL SIGNATURES</span>
                   <span style={{ fontSize: '2.2rem', fontWeight: 900, color: '#ef4444', fontFamily: 'monospace' }}>
-                    {(totalSignatures + 124300).toLocaleString()}+
+                    {loadingCampaigns ? '...' : totalSignatures.toLocaleString()}
                   </span>
                 </div>
 
