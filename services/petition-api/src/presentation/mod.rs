@@ -25,7 +25,6 @@ pub fn create_router(state: AppState) -> Router {
         .route("/api/petition/list", get(handlers::petition::list_petitions))
         .route("/api/petition/:id", get(handlers::petition::get_petition))
         .route("/api/captcha/generate", get(handlers::captcha::generate_captcha))
-        .route("/api/altcha/challenge", get(handlers::altcha::get_challenge))
         
         // OTP verification endpoints
         .route("/api/otp/request", post(handlers::otp::request_otp))

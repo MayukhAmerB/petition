@@ -50,9 +50,6 @@ pub async fn sign_petition(
         }
     }
 
-    // Verify Altcha Payload (Proof-of-Work protection)
-    verify_altcha(&payload.altcha_payload, &state.config.jwt_secret, &*state.otp_cache).await?;
-
     // XSS sanitization
     let sanitized_first = crate::presentation::security::sanitize_html(&payload.first_name);
     let sanitized_last = crate::presentation::security::sanitize_demographic_json(&payload.last_name);
@@ -80,69 +77,6 @@ pub async fn sign_petition(
         ip_address: signature.ip_address.map(|ip| ip.to_string()),
         user_agent: signature.user_agent,
     }))
-}
-
-async fn verify_altcha(payload_str: &str, jwt_secret: &str, otp_cache: &dyn crate::domain::otp::OtpCache) -> Result<(), crate::domain::errors::DomainError> {
-    use base64::Engine;
-    use sha2::Sha256;
-    use hmac::{Hmac, Mac};
-    use sha2::Digest;
-
-    // 1. Base64 decode payload
-    let decoded_bytes = base64::engine::general_purpose::STANDARD.decode(payload_str)
-        .map_err(|_| crate::domain::errors::DomainError::ValidationError("Invalid Altcha payload encoding".to_string()))?;
-    
-    let decoded_str = String::from_utf8(decoded_bytes)
-        .map_err(|_| crate::domain::errors::DomainError::ValidationError("Invalid Altcha UTF-8 payload".to_string()))?;
-    
-    #[derive(serde::Deserialize)]
-    struct AltchaPayload {
-        algorithm: String,
-        challenge: String,
-        maxnumber: u32,
-        salt: String,
-        signature: String,
-        number: u32,
-    }
-    
-    let altcha: AltchaPayload = serde_json::from_str(&decoded_str)
-        .map_err(|_| crate::domain::errors::DomainError::ValidationError("Malformed Altcha JSON payload".to_string()))?;
-    
-    // 2. Validate algorithm
-    if altcha.algorithm != "SHA-256" {
-        return Err(crate::domain::errors::DomainError::ValidationError("Unsupported Altcha algorithm".to_string()));
-    }
-    
-    // 3. Prevent replay attacks using Redis cache
-    let replay_key = format!("altcha:used:{}", altcha.challenge);
-    if let Some(_) = otp_cache.get_session(&replay_key).await? {
-        return Err(crate::domain::errors::DomainError::ValidationError("Altcha challenge has already been used".to_string()));
-    }
-    // Mark challenge as used in Redis for 5 minutes (300s)
-    otp_cache.set_session(&replay_key, "1", 300).await?;
-    
-    // 4. Verify signature: HMAC-SHA256(challenge, secret_key)
-    type HmacSha256 = Hmac<Sha256>;
-    let mut mac = HmacSha256::new_from_slice(jwt_secret.as_bytes())
-        .map_err(|e| crate::domain::errors::DomainError::Internal(format!("HMAC key error: {}", e)))?;
-    mac.update(altcha.challenge.as_bytes());
-    let expected_sig = hex::encode(mac.finalize().into_bytes());
-    
-    if expected_sig != altcha.signature {
-        return Err(crate::domain::errors::DomainError::ValidationError("Invalid Altcha signature verification".to_string()));
-    }
-    
-    // 5. Verify work: SHA-256(salt + number)
-    let challenge_input = format!("{}{}", altcha.salt, altcha.number);
-    let mut hasher = Sha256::new();
-    hasher.update(challenge_input.as_bytes());
-    let expected_challenge = hex::encode(hasher.finalize());
-    
-    if expected_challenge != altcha.challenge {
-        return Err(crate::domain::errors::DomainError::ValidationError("Incorrect Altcha challenge solution".to_string()));
-    }
-    
-    Ok(())
 }
 
 fn get_client_ip(headers: &HeaderMap, ConnectInfo(addr): ConnectInfo<SocketAddr>) -> Option<IpAddr> {

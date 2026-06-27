@@ -69,7 +69,6 @@ pub struct SignPetitionRequest {
     pub agreed_terms: bool,
     pub captcha_id: String,
     pub captcha_answer: String,
-    pub altcha_payload: String,
 }
 
 #[derive(Debug, Serialize)]

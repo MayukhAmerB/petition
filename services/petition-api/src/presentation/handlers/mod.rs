@@ -4,5 +4,3 @@ pub mod otp;
 pub mod sign;
 pub mod health;
 pub mod captcha;
-pub mod altcha;
-

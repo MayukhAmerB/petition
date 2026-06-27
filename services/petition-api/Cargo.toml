@@ -24,7 +24,3 @@ dotenvy         = "0.15"
 time            = { version = "0.3", features = ["serde", "formatting", "parsing"] }
 ipnetwork       = { version = "0.20", features = ["serde"] } # For INET parsing in PostgreSQL
 async-trait     = "0.1"
-sha2            = "0.10"
-hmac            = "0.12"
-base64          = "0.21"
-hex             = "0.4"
