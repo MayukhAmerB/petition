@@ -22,6 +22,7 @@ use crate::application::otp::{RequestOtpUseCase, VerifyOtpUseCase};
 use crate::application::signature::SignPetitionUseCase;
 use crate::presentation::create_router;
 
+use axum::extract::DefaultBodyLimit;
 use std::sync::Arc;
 use sqlx::postgres::PgPoolOptions;
 use tracing::{info, error, Level};
@@ -182,6 +183,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let app = create_router(state)
         .layer(cors)
+        .layer(DefaultBodyLimit::max(150 * 1024 * 1024))
         .layer(tower_http::trace::TraceLayer::new_for_http());
 
     // 13. Bind server and start listening
