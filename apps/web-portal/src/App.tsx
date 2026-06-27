@@ -341,7 +341,7 @@ function HomeView() {
             </h1>
             
             <p style={{ color: '#888888', fontSize: '1.05rem', lineHeight: 1.6, marginBottom: '32px', maxWidth: '520px' }}>
-              We facilitate legally binding electronic signatures and SMS OTP-authenticated petitions to demand civil liberties, municipal reform, and institutional transparency.
+              We facilitate legally binding electronic signatures with captcha-protected petition submissions to demand civil liberties, municipal reform, and institutional transparency.
             </p>
 
             <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }} className="hero-buttons">
@@ -718,9 +718,9 @@ function HomeView() {
               <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: 'rgba(239, 68, 68, 0.08)', border: '1px solid #ef4444', color: '#ef4444', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px auto', fontWeight: 800, fontSize: '1.2rem' }}>
                 2
               </div>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#ffffff', marginBottom: '10px', textTransform: 'uppercase' }}>Enter Details & OTP</h3>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#ffffff', marginBottom: '10px', textTransform: 'uppercase' }}>Enter Details & Captcha</h3>
               <p style={{ color: '#a0aec0', fontSize: '0.85rem', lineHeight: 1.5 }}>
-                Provide your details (Age, City, Pincode) and verify your phone number via a secure 6-digit SMS verification code.
+                Provide your details (Age, City, Pincode) and complete the security captcha before submitting your signature.
               </p>
             </div>
 
@@ -791,7 +791,7 @@ function HomeView() {
               </h4>
               {expandedFaq === 0 && (
                 <p style={{ color: '#a0aec0', fontSize: '0.85rem', lineHeight: 1.5, paddingLeft: '24px', marginTop: '12px', animation: 'fadeInUp 0.3s ease' }}>
-                  Yes. By validating your identity via SMS One-Time Passwords (OTP) and accepting the Republic of India Electronic Signature Agreement, your signature carries equivalent legal weight to a physical signature under Section 2(ta) and Section 5 of the Information Technology Act, 2000.
+                  Yes. By submitting your details, completing the captcha security check, and accepting the Republic of India Electronic Signature Agreement, your signature carries equivalent legal weight to a physical signature under Section 2(ta) and Section 5 of the Information Technology Act, 2000.
                 </p>
               )}
             </div>
