@@ -35,7 +35,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     throw errorDetail;
   }
 
-  // Handle empty 200 OK responses (like POST /otp/request returning void)
+  // Handle empty 200 OK responses from endpoints that return no body.
   const contentType = response.headers.get('content-type');
   if (contentType && contentType.includes('application/json')) {
     return response.json() as Promise<T>;

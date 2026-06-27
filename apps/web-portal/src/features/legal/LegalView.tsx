@@ -61,7 +61,7 @@ export default function LegalView() {
                 Information Technology Act, 2000 Compliance
               </h2>
               <div style={{ padding: '16px', backgroundColor: 'rgba(239,68,68,0.03)', borderLeft: '4px solid #ef4444', borderRadius: '4px', marginBottom: '24px' }}>
-                <strong style={{ color: '#ffffff' }}>Legal Summary:</strong> Electronic signatures validated via One-Time Passwords (OTP) sent to verified mobile numbers carry full legal validity under Section 2(ta) and Section 5 of the Information Technology Act, 2000.
+                <strong style={{ color: '#ffffff' }}>Legal Summary:</strong> Electronic signatures submitted through captcha-protected verification carry full legal validity under Section 2(ta) and Section 5 of the Information Technology Act, 2000.
               </div>
               
               <h3 style={{ color: '#ffffff', fontSize: '1.15rem', fontWeight: 700, marginTop: '24px', marginBottom: '12px' }}>1. Recognition of Electronic Signatures</h3>
@@ -69,9 +69,9 @@ export default function LegalView() {
                 Under Section 5 of the IT Act, 2000, where any law requires information or any other matter to be authenticated by affixing the signature, then, notwithstanding anything contained in such law, such requirement shall be deemed to have been satisfied if such information or matter is authenticated by means of an electronic signature affixed in such manner as may be prescribed by the Central Government.
               </p>
               
-              <h3 style={{ color: '#ffffff', fontSize: '1.15rem', fontWeight: 700, marginTop: '24px', marginBottom: '12px' }}>2. Identity Verification and OTP Validation</h3>
+              <h3 style={{ color: '#ffffff', fontSize: '1.15rem', fontWeight: 700, marginTop: '24px', marginBottom: '12px' }}>2. Identity Verification and Captcha Validation</h3>
               <p>
-                Our platform integrates a high-trust verification flow. By registering your first name, last name, and verifying your active mobile phone number via a secure 6-digit SMS One-Time Password (OTP), you establish a unique link between your identity and the signature submission, satisfying the reliability standards under Section 15 of the IT Act, 2000 for secure electronic signatures.
+                Our platform integrates a high-trust verification flow. By registering your first name, last name, mobile phone number, and completing the captcha security check, you establish a unique link between your identity and the signature submission, satisfying the reliability standards under Section 15 of the IT Act, 2000 for secure electronic signatures.
               </p>
 
               <h3 style={{ color: '#ffffff', fontSize: '1.15rem', fontWeight: 700, marginTop: '24px', marginBottom: '12px' }}>3. Audit Trails & Tamper Evidence</h3>
@@ -98,7 +98,7 @@ export default function LegalView() {
               <ul style={{ paddingLeft: '20px', margin: '12px 0' }}>
                 <li>• First Name & Last Name (Identity authentication)</li>
                 <li>• Age, City, Pincode, State & Country (Demographic residency validation)</li>
-                <li>• Mobile Phone Number (OTP validation and uniqueness constraints)</li>
+                <li>• Mobile Phone Number (signature uniqueness and audit constraints)</li>
                 <li>• System IP Address & Signature Timestamp (Security auditing logs)</li>
               </ul>
 
