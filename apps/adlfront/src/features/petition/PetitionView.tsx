@@ -167,7 +167,12 @@ export default function PetitionView() {
       setStep('success');
       fetchPetition(false);
     } catch (err) {
-      setActionError((err as any).message || 'Failed to submit signature.');
+      const apiError = err as any;
+      if (apiError.code === 'DUPLICATE_SIGNATURE') {
+        setActionError('This phone number has already been used to sign this petition.');
+      } else {
+        setActionError(apiError.message || 'Failed to submit signature.');
+      }
       loadCaptcha();
     } finally {
       setSubmitting(false);
@@ -606,19 +611,6 @@ export default function PetitionView() {
             <p style={{ color: 'var(--text-secondary)', fontSize: '1.05rem', marginBottom: '24px', maxWidth: '500px', margin: '0 auto 24px' }}>
               Your signature has been successfully recorded. Your support makes a difference!
             </p>
-            <button onClick={() => {
-              setFirstName('');
-              setLastName('');
-              setAge('');
-              setCity('');
-              setPincode('');
-              setStateName('');
-              setPhone('');
-              setAgreedTerms(false);
-              setStep('details');
-            }} className="btn btn-secondary">
-              Sign Another
-            </button>
           </div>
         )}
       </div>
