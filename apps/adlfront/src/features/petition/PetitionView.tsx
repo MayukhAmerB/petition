@@ -611,17 +611,18 @@ export default function PetitionView() {
             <p style={{ color: 'var(--text-secondary)', fontSize: '1.05rem', marginBottom: '24px', maxWidth: '500px', margin: '0 auto 24px' }}>
               Your signature has been successfully recorded. Your support makes a difference!
             </p>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.5, maxWidth: '560px', margin: '0 auto' }}>
-              Follow the ADL FRONT channel on WhatsApp:{' '}
-              <a
-                href="https://whatsapp.com/channel/0029Vb6BSvaEAKWDwHR5wb0W"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ color: 'var(--primary)', fontWeight: 700, wordBreak: 'break-word' }}
-              >
-                https://whatsapp.com/channel/0029Vb6BSvaEAKWDwHR5wb0W
-              </a>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.5, maxWidth: '560px', margin: '0 auto 16px' }}>
+              Follow the ADL FRONT channel on WhatsApp.
             </p>
+            <a
+              href="https://whatsapp.com/channel/0029Vb6BSvaEAKWDwHR5wb0W"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-primary"
+              style={{ display: 'inline-flex', textDecoration: 'none', padding: '12px 20px' }}
+            >
+              Click here to join the WhatsApp Channel
+            </a>
           </div>
         )}
       </div>
