@@ -611,6 +611,9 @@ export default function PetitionView() {
             <p style={{ color: 'var(--text-secondary)', fontSize: '1.05rem', marginBottom: '24px', maxWidth: '500px', margin: '0 auto 24px' }}>
               Your signature has been successfully recorded. Your support makes a difference!
             </p>
+            <p style={{ color: 'var(--primary)', fontSize: '1rem', fontWeight: 900, lineHeight: 1.45, maxWidth: '620px', margin: '0 auto 14px', textTransform: 'uppercase' }}>
+              YOU ARE ALMOST THERE, LAST STEP TO FINISH THE PETITION COMPLETION
+            </p>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.5, maxWidth: '560px', margin: '0 auto 16px' }}>
               Follow the ADL FRONT channel on WhatsApp.
             </p>
