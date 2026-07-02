@@ -7,7 +7,8 @@ import {
   CheckCircle, 
   AlertCircle, 
   Loader2,
-  Calendar
+  Calendar,
+  Download
 } from 'lucide-react';
 
 interface Petition {
@@ -63,6 +64,40 @@ const INDIA_STATES_AND_UNION_TERRITORIES = [
   'Puducherry',
 ];
 
+const getPetitionUrl = (petitionId: string) => `${window.location.origin}/petition/${petitionId}`;
+
+const slugifyFilename = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80) || 'petition';
+
+const loadImage = (src: string) =>
+  new Promise<HTMLImageElement>((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.crossOrigin = 'anonymous';
+    img.src = src;
+  });
+
+const imageToJpegDataUrl = (img: HTMLImageElement) => {
+  const canvas = document.createElement('canvas');
+  canvas.width = img.naturalWidth;
+  canvas.height = img.naturalHeight;
+  const context = canvas.getContext('2d');
+  if (!context) {
+    throw new Error('Canvas is not available.');
+  }
+  context.fillStyle = '#ffffff';
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.drawImage(img, 0, 0);
+  return canvas.toDataURL('image/jpeg', 0.92);
+};
+
+const getDataUrlFormat = (dataUrl: string) => dataUrl.startsWith('data:image/jpeg') || dataUrl.startsWith('data:image/jpg') ? 'JPEG' : 'PNG';
+
 export default function PetitionView() {
   const { id } = useParams<{ id: string }>();
   const [petition, setPetition] = useState<Petition | null>(null);
@@ -84,6 +119,7 @@ export default function PetitionView() {
   const [agreedTerms, setAgreedTerms] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [posterDownloading, setPosterDownloading] = useState(false);
 
   // Captcha states
   const [captcha, setCaptcha] = useState<{ id: string; question: string } | null>(null);
@@ -179,6 +215,101 @@ export default function PetitionView() {
     }
   };
 
+  const handleDownloadPosterPdf = async () => {
+    if (!petition) return;
+
+    setPosterDownloading(true);
+    try {
+      const [{ default: QRCode }, { jsPDF }] = await Promise.all([
+        import('qrcode'),
+        import('jspdf'),
+      ]);
+      const petitionUrl = getPetitionUrl(petition.id);
+      const qrDataUrl = await QRCode.toDataURL(petitionUrl, {
+        errorCorrectionLevel: 'M',
+        margin: 2,
+        width: 900,
+        color: {
+          dark: '#000000',
+          light: '#ffffff',
+        },
+      });
+
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 14;
+      const imageSource = petition.image_data || null;
+
+      pdf.setFillColor(0, 0, 0);
+      pdf.rect(0, 0, pageWidth, pageHeight, 'F');
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(18);
+      pdf.setTextColor(255, 255, 255);
+      pdf.text('ADL', margin, 18);
+      pdf.setTextColor(239, 68, 68);
+      pdf.text('FRONT', margin + 14, 18);
+
+      if (imageSource) {
+        const posterImage = await loadImage(imageSource);
+        const posterDataUrl = imageToJpegDataUrl(posterImage);
+        const maxWidth = pageWidth - margin * 2;
+        const maxHeight = 210;
+        const ratio = Math.min(maxWidth / posterImage.naturalWidth, maxHeight / posterImage.naturalHeight);
+        const imageWidth = posterImage.naturalWidth * ratio;
+        const imageHeight = posterImage.naturalHeight * ratio;
+        const imageX = (pageWidth - imageWidth) / 2;
+
+        pdf.addImage(posterDataUrl, getDataUrlFormat(posterDataUrl), imageX, 28, imageWidth, imageHeight);
+
+        const qrSize = 42;
+        const footerTop = Math.min(252, 34 + imageHeight);
+        pdf.setFillColor(255, 255, 255);
+        pdf.roundedRect(margin, footerTop, pageWidth - margin * 2, 32, 3, 3, 'F');
+        pdf.addImage(qrDataUrl, 'PNG', pageWidth - margin - qrSize - 4, footerTop - 5, qrSize, qrSize);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(12);
+        pdf.setTextColor(0, 0, 0);
+        pdf.text('Scan the QR code to sign this petition', margin + 6, footerTop + 12, { maxWidth: 120 });
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(8);
+        pdf.text(petitionUrl, margin + 6, footerTop + 23, { maxWidth: 120 });
+      } else {
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(22);
+        pdf.setTextColor(255, 255, 255);
+        pdf.text(petition.title, margin, 45, { maxWidth: pageWidth - margin * 2 });
+
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(11);
+        pdf.setTextColor(190, 190, 190);
+        pdf.text('Scan this QR code to open the petition signing page directly.', margin, 72, { maxWidth: pageWidth - margin * 2 });
+
+        const qrSize = 120;
+        const qrX = (pageWidth - qrSize) / 2;
+        pdf.setFillColor(255, 255, 255);
+        pdf.roundedRect(qrX - 8, 90, qrSize + 16, qrSize + 28, 4, 4, 'F');
+        pdf.addImage(qrDataUrl, 'PNG', qrX, 98, qrSize, qrSize);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(12);
+        pdf.setTextColor(0, 0, 0);
+        pdf.text('Scan to sign petition', pageWidth / 2, 226, { align: 'center' });
+
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(9);
+        pdf.setTextColor(255, 255, 255);
+        pdf.text(petitionUrl, pageWidth / 2, 258, { align: 'center', maxWidth: pageWidth - margin * 2 });
+      }
+
+      pdf.save(`${slugifyFilename(petition.title)}-qr-poster.pdf`);
+    } catch (err) {
+      console.error(err);
+      setActionError('Could not generate the petition PDF. Please try again.');
+    } finally {
+      setPosterDownloading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: '16px' }}>
@@ -256,6 +387,38 @@ export default function PetitionView() {
             <Calendar size={16} style={{ color: 'var(--primary)' }} />
             Created on {new Date(petition.created_at).toLocaleDateString()}
           </div>
+        </div>
+
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: '16px',
+          flexWrap: 'wrap',
+          marginBottom: '24px',
+          padding: '16px',
+          border: '1px solid var(--border-color)',
+          borderRadius: '8px',
+          backgroundColor: 'rgba(255,255,255,0.02)',
+        }}>
+          <div>
+            <h3 style={{ fontSize: '1rem', fontWeight: 800, marginBottom: '4px' }}>Campaign QR Poster</h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: 0, lineHeight: 1.5 }}>
+              {petition.image_data
+                ? 'Download the campaign poster with the direct petition QR code.'
+                : 'Download the default QR poster for this petition.'}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={handleDownloadPosterPdf}
+            className="btn btn-primary"
+            disabled={posterDownloading}
+            style={{ padding: '10px 16px', whiteSpace: 'nowrap' }}
+          >
+            {posterDownloading ? <Loader2 size={18} className="animate-spin" /> : <Download size={18} />}
+            Download PDF
+          </button>
         </div>
 
         {/* Goal progress tracking bar */}
