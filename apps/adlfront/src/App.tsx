@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { BrowserRouter, Routes, Route, Link, Outlet } from 'react-router-dom';
+import QRCode from 'qrcode';
 import PetitionView from './features/petition/PetitionView';
 import LoginView from './features/admin/LoginView';
 import DashboardView from './features/admin/DashboardView';
@@ -129,6 +130,77 @@ interface Campaign {
   image_data?: string | null;
   eye_label?: string | null;
   goal: number;
+}
+
+function CampaignQrCode({ petitionId, title }: { petitionId: string; title: string }) {
+  const [qrSrc, setQrSrc] = useState('');
+
+  useEffect(() => {
+    let cancelled = false;
+    const petitionUrl = `${window.location.origin}/petition/${petitionId}`;
+
+    QRCode.toDataURL(petitionUrl, {
+      errorCorrectionLevel: 'M',
+      margin: 1,
+      width: 128,
+      color: {
+        dark: '#000000',
+        light: '#ffffff',
+      },
+    })
+      .then((dataUrl) => {
+        if (!cancelled) setQrSrc(dataUrl);
+      })
+      .catch(() => {
+        if (!cancelled) setQrSrc('');
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [petitionId]);
+
+  return (
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: '12px',
+      padding: '12px',
+      border: '1px solid #1f1f1f',
+      borderRadius: '8px',
+      backgroundColor: '#030303',
+      marginBottom: '18px',
+    }}>
+      <div style={{
+        width: '82px',
+        height: '82px',
+        padding: '5px',
+        backgroundColor: '#ffffff',
+        borderRadius: '6px',
+        flexShrink: 0,
+      }}>
+        {qrSrc ? (
+          <img
+            src={qrSrc}
+            alt={`QR code for ${title}`}
+            loading="lazy"
+            decoding="async"
+            style={{ width: '100%', height: '100%', display: 'block' }}
+          />
+        ) : (
+          <div style={{ width: '100%', height: '100%', backgroundColor: '#f3f3f3' }} />
+        )}
+      </div>
+      <div>
+        <p style={{ color: '#ffffff', fontSize: '0.78rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '1px', margin: '0 0 4px' }}>
+          Scan to sign
+        </p>
+        <p style={{ color: '#777777', fontSize: '0.72rem', lineHeight: 1.4, margin: 0 }}>
+          Opens the direct petition signing page.
+        </p>
+      </div>
+    </div>
+  );
 }
 
 function PublicLayout() {
@@ -540,6 +612,8 @@ function HomeView() {
                       }}>
                         {campaign.number}
                       </p>
+
+                      <CampaignQrCode petitionId={campaign.id} title={campaign.name} />
 
                       <Link 
                         to={`/petition/${campaign.id}`} 
