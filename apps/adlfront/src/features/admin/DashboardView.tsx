@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import QRCode from 'qrcode';
 import { api } from '../../core/api';
 import { 
   Plus, 
@@ -42,6 +43,75 @@ interface AdminPetition {
   image_data?: string | null;
   eye_label?: string | null;
   goal: number;
+}
+
+function getPetitionUrl(petitionId: string) {
+  return `${window.location.origin}/petition/${petitionId}`;
+}
+
+function PetitionQrCode({ url, title, compact = false }: { url: string; title: string; compact?: boolean }) {
+  const [qrSrc, setQrSrc] = useState('');
+
+  useEffect(() => {
+    let cancelled = false;
+
+    QRCode.toDataURL(url, {
+      errorCorrectionLevel: 'M',
+      margin: 2,
+      width: compact ? 112 : 220,
+      color: {
+        dark: '#000000',
+        light: '#ffffff',
+      },
+    })
+      .then((dataUrl) => {
+        if (!cancelled) setQrSrc(dataUrl);
+      })
+      .catch(() => {
+        if (!cancelled) setQrSrc('');
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [url, compact]);
+
+  return (
+    <div style={{
+      display: 'inline-flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: compact ? '6px' : '10px',
+      padding: compact ? '8px' : '16px',
+      backgroundColor: '#ffffff',
+      borderRadius: '8px',
+      border: '1px solid var(--border-color)',
+      color: '#111111',
+      minWidth: compact ? '132px' : '260px',
+    }}>
+      {qrSrc ? (
+        <img
+          src={qrSrc}
+          alt={`QR code for ${title}`}
+          style={{
+            width: compact ? '112px' : '220px',
+            height: compact ? '112px' : '220px',
+            display: 'block',
+          }}
+        />
+      ) : (
+        <Loader2 size={compact ? 28 : 40} className="animate-spin" />
+      )}
+      <span style={{
+        fontSize: compact ? '0.65rem' : '0.8rem',
+        fontWeight: 700,
+        textAlign: 'center',
+        lineHeight: 1.3,
+      }}>
+        Scan to sign petition
+      </span>
+    </div>
+  );
 }
 
 export default function DashboardView() {
@@ -411,6 +481,7 @@ export default function DashboardView() {
                   <thead>
                     <tr style={{ backgroundColor: 'rgba(255,255,255,0.02)', borderBottom: '1px solid var(--border-color)' }}>
                       <th style={{ padding: '12px 16px', color: 'var(--text-secondary)' }}>Petition Title</th>
+                      <th style={{ padding: '12px 16px', color: 'var(--text-secondary)', textAlign: 'center' }}>QR Code</th>
                       <th style={{ padding: '12px 16px', color: 'var(--text-secondary)' }}>Signatures</th>
                       <th style={{ padding: '12px 16px', color: 'var(--text-secondary)' }}>Goal Target</th>
                       <th style={{ padding: '12px 16px', color: 'var(--text-secondary)' }}>Created At</th>
@@ -429,6 +500,9 @@ export default function DashboardView() {
                               Link <ExternalLink size={10} />
                             </a>
                           </div>
+                        </td>
+                        <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                          <PetitionQrCode url={getPetitionUrl(p.id)} title={p.title} compact />
                         </td>
                         <td style={{ padding: '12px 16px', color: 'var(--text-primary)', fontWeight: 600 }}>
                           {p.signature_count}
@@ -530,6 +604,9 @@ export default function DashboardView() {
                   {copied ? <Check size={18} style={{ color: 'var(--success)' }} /> : <Copy size={18} />}
                   {copied ? 'Copied' : 'Copy'}
                 </button>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+                <PetitionQrCode url={createdUrl} title="new petition" />
               </div>
               <div style={{ display: 'flex', gap: '12px' }}>
                 <a href={`/petition/${createdId}`} target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ padding: '8px 16px', fontSize: '0.85rem' }}>
