@@ -136,7 +136,9 @@ impl PetitionRepository for PostgresDb {
 
     async fn list_active(&self) -> Result<Vec<Petition>, DomainError> {
         let rows = sqlx::query(
-            "SELECT id, title, description, image_data, eye_label, terms, created_by, is_active, signature_count, created_at, goal \
+            "SELECT id, title, LEFT(description, 360) AS description, \
+             CASE WHEN image_data IS NULL OR image_data = '' THEN NULL ELSE 'HAS_IMAGE' END AS image_data, \
+             eye_label, '' AS terms, created_by, is_active, signature_count, created_at, goal \
              FROM petitions WHERE is_active = TRUE ORDER BY created_at DESC"
         )
         .fetch_all(&self.pool)
@@ -162,7 +164,7 @@ impl PetitionRepository for PostgresDb {
 
     async fn list_all(&self) -> Result<Vec<Petition>, DomainError> {
         let rows = sqlx::query(
-            "SELECT id, title, description, image_data, eye_label, terms, created_by, is_active, signature_count, created_at, goal \
+            "SELECT id, title, LEFT(description, 360) AS description, NULL::text AS image_data, eye_label, '' AS terms, created_by, is_active, signature_count, created_at, goal \
              FROM petitions ORDER BY created_at DESC"
         )
         .fetch_all(&self.pool)

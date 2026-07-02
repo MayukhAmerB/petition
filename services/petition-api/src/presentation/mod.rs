@@ -23,6 +23,7 @@ pub fn create_router(state: AppState) -> Router {
         
         // Public petition endpoints
         .route("/api/petition/list", get(handlers::petition::list_petitions))
+        .route("/api/petition/:id/image", get(handlers::petition::get_petition_image))
         .route("/api/petition/:id", get(handlers::petition::get_petition))
         .route("/api/captcha/generate", get(handlers::captcha::generate_captcha))
         

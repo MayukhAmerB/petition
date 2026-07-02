@@ -455,6 +455,8 @@ function HomeView() {
                         <img 
                           src={campaign.image_data} 
                           alt={campaign.name} 
+                          loading="lazy"
+                          decoding="async"
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                         />
                       ) : (
